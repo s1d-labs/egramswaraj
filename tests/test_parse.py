@@ -1,20 +1,20 @@
-"""Parsing tests on a saved page: fast, no network. Add a saved page for every layout your site has."""
+"""Parsing tests on a saved GP page: fast, no network."""
 from pathlib import Path
 
-import crawl
+import geotag
 
 PAGES = Path(__file__).parent / "pages"
 
 
-def test_catalogue_page_gives_twenty_books():
-    rows = crawl.parse((PAGES / "catalogue-page-1.html").read_text(encoding="utf-8"))
-    assert len(rows) == 20
-    rid, book = rows[0]
-    assert rid == "a-light-in-the-attic_1000"                       # the site's own id: stable across runs
-    assert book["title"] == "A Light in the Attic" and book["price"] == "£51.77" and book["availability"] == "In stock"
-    assert book["url"].startswith("https://books.toscrape.com/catalogue/")
-    assert len({r for r, _ in rows}) == 20                          # no duplicate ids on a page
+def test_gp_page_rows():
+    d = geotag.parse_gp((PAGES / "gp-2024-273090.html").read_text(encoding="utf-8"))
+    assert d["columns"][:3] == ["S.No", "Activity Code", "Activity Name"]
+    rows = d["rows"]
+    assert rows and all(r["activity_code"].isdigit() for r in rows)
+    assert all(r["photo"].startswith("getMactionPhoto.do") for r in rows)
+    assert all(r["lat"] and 6 < r["lat"] < 38 and 68 < r["lon"] < 98 for r in rows if r["lat"])
+    assert [r["sno"] for r in rows] == list(range(1, len(rows) + 1))
 
 
-def test_an_empty_page_gives_nothing():
-    assert crawl.parse("<html><body>No products</body></html>") == []
+def test_empty_page_gives_nothing():
+    assert geotag.parse_gp("<html><body>No data</body></html>")["rows"] == []

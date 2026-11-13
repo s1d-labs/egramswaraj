@@ -1,3 +1,12 @@
+# CLAUDE.md: the egramswaraj family
+
+Public reports of eGramSwaraj (egramswaraj.gov.in, Ministry of Panchayati Raj). Task `geotag` (geotag.py): the Geo Tagged Asset
+Report, one record per gram panchayat and plan year. Facts:
+
+- The counts tree (state, district, block, GP) is JSON; the GP page is HTML. Neither has a login or captcha.
+- The action plan, activity status and expenditure reports have a captcha; they are not collected.
+- Runners reach the site through the pool's Mumbai proxies (proxy="IN").
+
 # CLAUDE.md: how this repo works (s1d-labs scrape pool family)
 
 This repo is one **family** of the s1d-labs scrape pool: scrapers that run on members' GitHub Actions minutes, coordinated by
